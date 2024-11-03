@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  reth-db-reader:
+    build: .
+    volumes:
+      - mainnet_data:/root/.local/share/reth/mainnet
+    environment:
+      - RETH_DB_PATH=/root/.local/share/reth/mainnet
+
+volumes:
+  mainnet_data:
+    external: true

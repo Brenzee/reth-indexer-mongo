@@ -1,0 +1,14 @@
+[package]
+name = "reth-db-reader"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alloy = { version = "0.5.4", features = ["full"] }
+eyre = "0.6.12"
+reth_db = { git = "https://github.com/paradigmxyz/reth", package = "reth-db" }
+reth_chainspec = { git = "https://github.com/paradigmxyz/reth", package = "reth-chainspec" }
+reth_node_ethereum = { git = "https://github.com/paradigmxyz/reth", package = "reth-node-ethereum" }
+reth_node_types = { git = "https://github.com/paradigmxyz/reth", package = "reth-node-types" }
+reth_primitives = { git = "https://github.com/paradigmxyz/reth", package = "reth-primitives" }
+reth_provider = { git = "https://github.com/paradigmxyz/reth", package = "reth-provider" }

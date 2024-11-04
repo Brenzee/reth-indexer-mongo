@@ -3,6 +3,7 @@ version: "3.8"
 services:
   reth-db-reader:
     build: .
+    image: reth-db-reader:latest
     volumes:
       - mainnet_data:/root/.local/share/reth/mainnet
     environment:

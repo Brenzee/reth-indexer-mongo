@@ -1,4 +1,4 @@
-use alloy::primitives::{Address, Sealable, B256};
+use alloy::primitives::{Address, FixedBytes, Sealable, B256};
 use alloy::providers::Provider;
 use alloy::rpc::types::{Filter, FilteredParams};
 use reth_chainspec::ChainSpecBuilder;
@@ -6,12 +6,12 @@ use reth_db::{open_db_read_only, DatabaseEnv};
 use reth_node_ethereum::EthereumNode;
 use reth_node_types::NodeTypesWithDBAdapter;
 use reth_primitives::SealedHeader;
-use reth_provider::FullRpcProvider;
 use reth_provider::{
     providers::StaticFileProvider, AccountReader, BlockReader, BlockSource,
     BlockchainTreePendingStateProvider, HeaderProvider, ProviderFactory, ReceiptProvider,
     StateProvider, TransactionsProvider,
 };
+use reth_provider::{ChainSpecProvider, ChainStateBlockReader, FullRpcProvider};
 use std::time::Instant;
 use std::{path::Path, sync::Arc};
 
@@ -41,7 +41,7 @@ fn main() -> eyre::Result<()> {
     // the `provider_rw` function and look for the `Writer` variants of the traits.
     let provider = factory.provider()?;
 
-    pending_block_example(&provider)?;
+    playground_example(&provider)?;
     // Run basic queries against the DB
     let block_num = 223300;
     // header_provider_example(&provider)?;
@@ -62,16 +62,23 @@ fn main() -> eyre::Result<()> {
     Ok(())
 }
 
-fn pending_block_example<T: HeaderProvider>(provider: T) -> eyre::Result<()> {
+fn playground_example<T: ChainStateBlockReader + TransactionsProvider>(
+    provider: &T,
+) -> eyre::Result<()> {
     //let pending_block = provider
     //    .pending_block()?
     //    .ok_or(eyre::eyre!("cannot get pending block"));
 
-    let data = provider
-        .header_by_number(2000000)?
-        .ok_or(eyre::eyre!("not fetched"));
+    let data = provider.last_finalized_block_number()?;
+    println!("last finalized block: {:#?}", data);
 
-    println!("data: {:#?}", data);
+    let tx_hash: FixedBytes<32> =
+        "0xd39613e81e6f3976770a038980ce271a1223c41c823257a535def515dda76559".parse()?;
+    let tx = provider
+        .transaction_by_hash(tx_hash)?
+        .ok_or(eyre::eyre!("did not get tx"))?;
+    println!("tx: {:#?}", tx);
+
     Ok(())
 }
 

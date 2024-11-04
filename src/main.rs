@@ -1,14 +1,18 @@
 use alloy::primitives::{Address, Sealable, B256};
+use alloy::providers::Provider;
 use alloy::rpc::types::{Filter, FilteredParams};
 use reth_chainspec::ChainSpecBuilder;
 use reth_db::{open_db_read_only, DatabaseEnv};
 use reth_node_ethereum::EthereumNode;
 use reth_node_types::NodeTypesWithDBAdapter;
 use reth_primitives::SealedHeader;
+use reth_provider::FullRpcProvider;
 use reth_provider::{
-    providers::StaticFileProvider, AccountReader, BlockReader, BlockSource, HeaderProvider,
-    ProviderFactory, ReceiptProvider, StateProvider, TransactionsProvider,
+    providers::StaticFileProvider, AccountReader, BlockReader, BlockSource,
+    BlockchainTreePendingStateProvider, HeaderProvider, ProviderFactory, ReceiptProvider,
+    StateProvider, TransactionsProvider,
 };
+use std::time::Instant;
 use std::{path::Path, sync::Arc};
 
 // Providers are zero cost abstractions on top of an opened MDBX Transaction
@@ -37,12 +41,13 @@ fn main() -> eyre::Result<()> {
     // the `provider_rw` function and look for the `Writer` variants of the traits.
     let provider = factory.provider()?;
 
+    pending_block_example(provider)?;
     // Run basic queries against the DB
-    let block_num = 21098851;
-    header_provider_example(&provider, block_num)?;
-    block_provider_example(&provider, block_num)?;
-    txs_provider_example(&provider)?;
-    receipts_provider_example(&provider)?;
+    let block_num = 223300;
+    // header_provider_example(&provider)?;
+    // block_provider_example(&provider, block_num)?;
+    // txs_provider_example(&provider)?;
+    // receipts_provider_example(&provider)?;
 
     // Closes the RO transaction opened in the `factory.provider()` call. This is optional and
     // would happen anyway at the end of the function scope.
@@ -54,6 +59,15 @@ fn main() -> eyre::Result<()> {
     // Run it with historical state
     state_provider_example(factory.history_by_block_number(block_num)?)?;
 
+    Ok(())
+}
+
+fn pending_block_example<T: FullRpcProvider>(provider: T) -> eyre::Result<()> {
+    let pending_block = provider
+        .pending_block()?
+        .ok_or(eyre::eyre!("cannot get pending block"));
+
+    println!("pending block: {:#?}", pending_block);
     Ok(())
 }
 
@@ -74,7 +88,7 @@ fn header_provider_example<T: HeaderProvider>(provider: T, number: u64) -> eyre:
     let header_by_hash = provider
         .header(&sealed_header.hash())?
         .ok_or(eyre::eyre!("header by hash not found"))?;
-    println!("header: {:?}", header_by_hash);
+    println!("header: {:#?}", header_by_hash);
     assert_eq!(sealed_header.header(), &header_by_hash);
 
     // The header's total difficulty is stored in a separate table, so we have a separate call for

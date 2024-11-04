@@ -41,7 +41,7 @@ fn main() -> eyre::Result<()> {
     // the `provider_rw` function and look for the `Writer` variants of the traits.
     let provider = factory.provider()?;
 
-    pending_block_example(provider)?;
+    pending_block_example(&provider)?;
     // Run basic queries against the DB
     let block_num = 223300;
     // header_provider_example(&provider)?;
@@ -62,12 +62,16 @@ fn main() -> eyre::Result<()> {
     Ok(())
 }
 
-fn pending_block_example<T: FullRpcProvider>(provider: T) -> eyre::Result<()> {
-    let pending_block = provider
-        .pending_block()?
-        .ok_or(eyre::eyre!("cannot get pending block"));
+fn pending_block_example<T: HeaderProvider>(provider: T) -> eyre::Result<()> {
+    //let pending_block = provider
+    //    .pending_block()?
+    //    .ok_or(eyre::eyre!("cannot get pending block"));
 
-    println!("pending block: {:#?}", pending_block);
+    let data = provider
+        .header_by_number(2000000)?
+        .ok_or(eyre::eyre!("not fetched"));
+
+    println!("data: {:#?}", data);
     Ok(())
 }
 

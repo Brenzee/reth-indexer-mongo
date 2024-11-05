@@ -17,6 +17,8 @@ use reth_provider::{ChainSpecProvider, ChainStateBlockReader, FullRpcProvider};
 use std::time::Instant;
 use std::{path::Path, sync::Arc};
 
+mod config;
+
 // Providers are zero cost abstractions on top of an opened MDBX Transaction
 // exposing a familiar API to query the chain's information without requiring knowledge
 // of the inner tables.
@@ -43,22 +45,18 @@ fn main() -> eyre::Result<()> {
     // the `provider_rw` function and look for the `Writer` variants of the traits.
     let provider = factory.provider()?;
 
-    playground_example(&provider)?;
+    // const range =
+
+    sync_events(&provider)?;
 
     // Closes the RO transaction opened in the `factory.provider()` call. This is optional and
     // would happen anyway at the end of the function scope.
     drop(provider);
 
-    // // Run the example against latest state
-    // state_provider_example(factory.latest()?)?;
-    //
-    // // Run it with historical state
-    // state_provider_example(factory.history_by_block_number(block_num)?)?;
-
     Ok(())
 }
 
-fn playground_example<T: ReceiptProvider + HeaderProvider + BlockReader + TransactionsProvider>(
+fn sync_events<T: ReceiptProvider + HeaderProvider + BlockReader + TransactionsProvider>(
     provider: &T,
 ) -> eyre::Result<()> {
     let block_number = 21116342;

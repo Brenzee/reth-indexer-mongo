@@ -1,18 +1,17 @@
-use alloy::primitives::{Address, Bloom, FixedBytes, Sealable, B256};
-use alloy::providers::Provider;
+// use alloy::primitives::{Address, Bloom, FixedBytes, Sealable, B256};
+// use alloy::providers::Provider;
 use alloy::rpc::types::{Filter, FilteredParams};
 use reth_chainspec::ChainSpecBuilder;
 use reth_db::{open_db_read_only, DatabaseEnv};
 use reth_node_ethereum::EthereumNode;
 use reth_node_types::NodeTypesWithDBAdapter;
-use reth_primitives::SealedHeader;
+// use reth_primitives::SealedHeader;
 use reth_provider::{
     providers::StaticFileProvider, AccountReader, BlockReader, BlockSource,
     BlockchainTreePendingStateProvider, HeaderProvider, ProviderFactory, ReceiptProvider,
     StateProvider, TransactionsProvider,
 };
 use reth_provider::{ChainSpecProvider, ChainStateBlockReader, FullRpcProvider};
-use std::time::Instant;
 use std::{path::Path, sync::Arc};
 
 // Providers are zero cost abstractions on top of an opened MDBX Transaction
@@ -66,7 +65,7 @@ fn playground_example<T: HeaderProvider + ChainStateBlockReader + TransactionsPr
         .ok_or(eyre::eyre!("block not found"))?;
     println!("block header: {:#?}", data);
 
-    // let topic_id = 
+    // let topic_id =
 
     // data.logs
     // let rpc_bloom: Bloom = Bloom::from_str(&format!("{:?}", header_tx_info.logs_bloom)).unwrap();
@@ -133,7 +132,6 @@ fn playground_example<T: HeaderProvider + ChainStateBlockReader + TransactionsPr
 //     }
 // }
 //
-/// The `HeaderProvider` allows querying the headers-related tables.
 // fn header_provider_example<T: HeaderProvider>(provider: T, number: u64) -> eyre::Result<()> {
 //     // Can query the header by number
 //     let header = provider
@@ -167,7 +165,6 @@ fn playground_example<T: HeaderProvider + ChainStateBlockReader + TransactionsPr
 //     Ok(())
 // }
 //
-// /// The `TransactionsProvider` allows querying transaction-related information
 // fn txs_provider_example<T: TransactionsProvider>(provider: T) -> eyre::Result<()> {
 //     // Try the 5th tx
 //     let txid = 5;
@@ -206,7 +203,6 @@ fn playground_example<T: HeaderProvider + ChainStateBlockReader + TransactionsPr
 //     Ok(())
 // }
 //
-// /// The `BlockReader` allows querying the headers-related tables.
 // fn block_provider_example<T: BlockReader>(provider: T, number: u64) -> eyre::Result<()> {
 //     // Can query a block by number
 //     let block = provider
@@ -253,7 +249,6 @@ fn playground_example<T: HeaderProvider + ChainStateBlockReader + TransactionsPr
 //     Ok(())
 // }
 //
-// /// The `ReceiptProvider` allows querying the receipts tables.
 // fn receipts_provider_example<T: ReceiptProvider + TransactionsProvider + HeaderProvider>(
 //     provider: T,
 // ) -> eyre::Result<()> {

@@ -5,10 +5,10 @@ services:
     build: .
     image: reth-db-reader:latest
     volumes:
-      - mainnet_data:/root/.local/share/reth/mainnet
+      - reth_mainnet_data:/root/.local/share/reth/mainnet
     environment:
       - RETH_DB_PATH=/root/.local/share/reth/mainnet
 
 volumes:
-  mainnet_data:
+  reth_mainnet_data:
     external: true

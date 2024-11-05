@@ -1,10 +1,12 @@
+use alloy::primitives::{address, Address};
 // use alloy::primitives::{Address, Bloom, FixedBytes, Sealable, B256};
 // use alloy::providers::Provider;
-use alloy::rpc::types::{Filter, FilteredParams};
+use alloy::rpc::types::{Filter, FilterSet, FilteredParams, ValueOrArray};
 use reth_chainspec::ChainSpecBuilder;
 use reth_db::{open_db_read_only, DatabaseEnv};
 use reth_node_ethereum::EthereumNode;
 use reth_node_types::NodeTypesWithDBAdapter;
+use reth_primitives::Log;
 // use reth_primitives::SealedHeader;
 use reth_provider::{
     providers::StaticFileProvider, AccountReader, BlockReader, BlockSource,
@@ -12,6 +14,7 @@ use reth_provider::{
     StateProvider, TransactionsProvider,
 };
 use reth_provider::{ChainSpecProvider, ChainStateBlockReader, FullRpcProvider};
+use std::time::Instant;
 use std::{path::Path, sync::Arc};
 
 // Providers are zero cost abstractions on top of an opened MDBX Transaction
@@ -55,17 +58,55 @@ fn main() -> eyre::Result<()> {
     Ok(())
 }
 
-fn playground_example<T: HeaderProvider + ChainStateBlockReader + TransactionsProvider>(
+fn playground_example<T: ReceiptProvider + HeaderProvider + BlockReader + TransactionsProvider>(
     provider: &T,
 ) -> eyre::Result<()> {
     let block_number = 21116342;
+    const USDC: Address = address!("a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
 
     let data = provider
         .header_by_number(block_number)?
         .ok_or(eyre::eyre!("block not found"))?;
     println!("block header: {:#?}", data);
+    let start = Instant::now();
 
-    // let topic_id =
+    let filter_set = FilterSet::from(USDC);
+    let address_filter = FilteredParams::address_filter(&filter_set);
+    let has_usdc = FilteredParams::matches_address(data.logs_bloom, &address_filter);
+
+    if has_usdc == false {
+        println!("Block doesn't have USDC logs");
+        return Ok(());
+    } else {
+        println!("Block has USDC logs");
+    }
+
+    let block_indecies = provider.block_body_indices(block_number)?.unwrap();
+    for tx_id in block_indecies.first_tx_num..block_indecies.first_tx_num + block_indecies.tx_count
+    {
+        // let tx = provider.transaction_by_id_no_hash(tx_id)?.unwrap();
+        // println!("tx: {:?}", tx);
+        let receipt = provider.receipt(tx_id)?.unwrap();
+
+        let logs: Vec<Log> = receipt
+            .logs
+            .iter()
+            .filter(|log| USDC == log.address)
+            .cloned()
+            .collect();
+
+        if logs.is_empty() {
+            continue;
+        }
+
+        let tx = provider.transaction_by_id(tx_id)?.unwrap();
+
+        println!("Transaction {} had USDC logs {:#?}", tx.hash, logs);
+
+        // if logs.is_emp
+    }
+    let duration = start.elapsed();
+    println!("Time taken: {} ms", duration.as_millis());
 
     // data.logs
     // let rpc_bloom: Bloom = Bloom::from_str(&format!("{:?}", header_tx_info.logs_bloom)).unwrap();

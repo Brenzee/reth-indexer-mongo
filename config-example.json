@@ -1,0 +1,62 @@
+{
+  "rethDBLocation": "/home/ubuntu/.local/share/reth/mainnet/db",
+  "csvLocation": "/tmp",
+  "fromBlockNumber": 21016342,
+  "toBlockNumber": 21123012,
+  "postgres": {
+    "dropTableBeforeSync": true,
+    "applyIndexesBeforeSync": false,
+    "connectionString": "postgresql://postgres:password@localhost:5432/reth_indexer"
+  },
+  "mongodb": {
+    "connectionString": "mongodb://localhost:27017"
+  },
+  "eventMappings": [
+    {
+      "syncBackRoughlyEveryNLogs": 1000,
+      "decodeAbiItems": [
+        {
+          "name": "Swap",
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount0In",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount1In",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount0Out",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount1Out",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

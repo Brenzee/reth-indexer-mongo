@@ -12,3 +12,8 @@ reth_node_ethereum = { git = "https://github.com/paradigmxyz/reth", package = "r
 reth_node_types = { git = "https://github.com/paradigmxyz/reth", package = "reth-node-types" }
 reth_primitives = { git = "https://github.com/paradigmxyz/reth", package = "reth-primitives" }
 reth_provider = { git = "https://github.com/paradigmxyz/reth", package = "reth-provider" }
+serde = "1.0.214"
+serde_json = "1.0.132"
+tokio = { version = "1.41.1", features = ["full"] }
+log = "0.4.22"
+mongodb = "3.1.0"

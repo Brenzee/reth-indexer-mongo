@@ -1,4 +1,5 @@
-use reth_primitives::Address;
+use alloy::primitives::Address;
+//use reth_primitives::Address;
 use serde::Deserialize;
 use std::path::PathBuf;
 
@@ -34,6 +35,9 @@ pub struct ABIItem {
 
     /// The name of the ABI item.
     pub name: String,
+
+    /// The name of the collection to store the ABI item in.
+    pub collection_name: String,
 
     // Apply custom indexes to the database
     pub custom_db_indexes: Option<Vec<Vec<String>>>,
@@ -78,6 +82,25 @@ pub struct IndexerPostgresConfig {
     pub connection_string: String,
 }
 
+/// Represents a contract mapping in the Indexer.
+#[derive(Debug, Deserialize)]
+pub struct IndexerMongoDBConfig {
+    // /// If true, the tables will be dropped and recreated before syncing.
+    // #[serde(rename = "dropTableBeforeSync")]
+    // pub drop_tables: bool,
+
+    // /// If true, it apply indexes before it syncs which is slower but means
+    // /// you can query the data straight away
+    // #[serde(rename = "applyIndexesBeforeSync")]
+    // #[serde(default = "default_false")]
+    // pub apply_indexes_before_sync: bool,
+    /// The PostgreSQL connection string.
+    #[serde(rename = "connectionString")]
+    pub connection_string: String,
+
+    pub database: String,
+}
+
 #[derive(Debug, Deserialize)]
 pub struct IndexerGcpBigQueryConfig {
     #[serde(rename = "dropTableBeforeSync")]
@@ -116,29 +139,30 @@ pub struct IndexerConfig {
     #[serde(rename = "csvLocation")]
     pub csv_location: PathBuf,
 
-    /// TODO support eth_transfers
-    // #[serde(rename = "ethTransfers")]
-    // pub include_eth_transfers: bool,
-
     /// The starting block number.
     #[serde(rename = "fromBlockNumber")]
     pub from_block: u64,
 
+    // pub to_block: Option<u64>,
     /// The starting block number.
+    /// For now to_block is required
     #[serde(rename = "toBlockNumber")]
-    pub to_block: Option<u64>,
+    pub to_block: u64,
+
+    /// The mongodb configuration.
+    pub mongodb: IndexerMongoDBConfig,
 
     /// The postgres configuration.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub postgres: Option<IndexerPostgresConfig>,
 
-    /// GCP configuration, if exists
-    #[serde(rename = "gcpBigQuery", skip_serializing_if = "Option::is_none")]
-    pub gcp_bigquery: Option<IndexerGcpBigQueryConfig>,
+    // /// GCP configuration, if exists
+    // #[serde(rename = "gcpBigQuery", skip_serializing_if = "Option::is_none")]
+    // pub gcp_bigquery: Option<IndexerGcpBigQueryConfig>,
 
-    /// parquet configuration, if exists
-    #[serde(rename = "parquet", skip_serializing_if = "Option::is_none")]
-    pub parquet: Option<IndexerParquetConfig>,
-
+    // /// parquet configuration, if exists
+    // #[serde(rename = "parquet", skip_serializing_if = "Option::is_none")]
+    // pub parquet: Option<IndexerParquetConfig>,
     /// The list of contract mappings.
     #[serde(rename = "eventMappings")]
     pub event_mappings: Vec<IndexerContractMapping>,

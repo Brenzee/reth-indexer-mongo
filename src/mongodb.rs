@@ -16,9 +16,13 @@ pub async fn init_mongodb(
 ) -> eyre::Result<Database> {
     let options = ClientOptions::parse(&config.connection_string).await?;
     let client = Client::with_options(options)?;
+    println!("Connecting to MongoDB");
     let db = client.database(&config.database);
+    println!("Connected to MongoDB");
     // Need to create tables
+    println!("Creating collections");
     create_collections(&db, event_mappings).await?;
+    println!("Created collections");
     Ok(db)
 }
 

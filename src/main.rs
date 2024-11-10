@@ -60,9 +60,11 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
 
     let db_path = Path::new(&config.reth_db_location);
     let db = open_db_read_only(db_path.join("db").as_path(), Default::default())?;
+    info!("Opened db");
 
+    println!("Initializing MongoDB");
     let mongodb = init_mongodb(&config.mongodb, &config.event_mappings).await?;
-
+    info!("Initialized MongoDB");
     // let spec = ChainSpecBuilder::mainnet().build();
     // let factory = ProviderFactory::<NodeTypesWithDBAdapter<EthereumNode, Arc<DatabaseEnv>>>::new(
     //     db.into(),

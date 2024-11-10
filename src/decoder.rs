@@ -23,7 +23,8 @@ pub struct DecodedLog {
 pub fn decode_logs(topic_id: B256, logs: &[Log], abi_item: &ABIItem) -> Vec<DecodedLog> {
     logs.iter()
         .filter_map(|log| {
-            if log.topics()[0] == topic_id {
+            let topic = log.topics();
+            if topic.len() > 0 && topic[0] == topic_id {
                 decode_log(log, abi_item).ok()
             } else {
                 None

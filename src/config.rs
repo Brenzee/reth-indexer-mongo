@@ -37,6 +37,7 @@ pub struct ABIItem {
     pub name: String,
 
     /// The name of the collection to store the ABI item in.
+    #[serde(rename = "collectionName")]
     pub collection_name: String,
 
     // Apply custom indexes to the database

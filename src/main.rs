@@ -63,9 +63,11 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
     let to_block = config.to_block;
 
     let db_path = Path::new(&config.reth_db_location);
-    let read_tx_duration = MaxReadTransactionDuration::Set(Duration::from_secs(30));
-    let database_args =
-        DatabaseArguments::default().with_max_read_transaction_duration(Some(read_tx_duration));
+    // let read_tx_duration = MaxReadTransactionDuration::Set(Duration::from_secs(30));
+    // let database_args =
+    // DatabaseArguments::default().with_max_read_transaction_duration(Some(read_tx_duration));
+    let database_args: DatabaseArguments = Default::default();
+    println!("database_args: {:#?}", database_args);
     let db = open_db_read_only(db_path.join("db").as_path(), database_args)?;
     info!("Opened db");
 

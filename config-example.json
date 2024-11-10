@@ -1,22 +1,18 @@
 {
-  "rethDBLocation": "/home/ubuntu/.local/share/reth/mainnet/db",
+  "rethDBLocation": "/home/ubuntu/.local/share/reth/mainnet",
   "csvLocation": "/tmp",
-  "fromBlockNumber": 21016342,
-  "toBlockNumber": 21123012,
-  "postgres": {
-    "dropTableBeforeSync": true,
-    "applyIndexesBeforeSync": false,
-    "connectionString": "postgresql://postgres:password@localhost:5432/reth_indexer"
-  },
+  "fromBlockNumber": 20840524,
+  "toBlockNumber": 21159531,
   "mongodb": {
-    "connectionString": "mongodb://localhost:27017"
+    "connectionString": "mongodb://localhost:27017",
+    "database": "reth-events"
   },
   "eventMappings": [
     {
-      "syncBackRoughlyEveryNLogs": 1000,
       "decodeAbiItems": [
         {
           "name": "Swap",
+          "collectionName": "swaps",
           "inputs": [
             {
               "indexed": true,

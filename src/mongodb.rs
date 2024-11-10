@@ -16,13 +16,9 @@ pub async fn init_mongodb(
 ) -> eyre::Result<Database> {
     let options = ClientOptions::parse(&config.connection_string).await?;
     let client = Client::with_options(options)?;
-    println!("Connecting to MongoDB");
     let db = client.database(&config.database);
-    println!("Connected to MongoDB");
     // Need to create tables
-    println!("Creating collections");
     create_collections(&db, event_mappings).await?;
-    println!("Created collections");
     Ok(db)
 }
 
@@ -33,7 +29,6 @@ async fn create_collections(
     for mapping in event_mappings {
         for abi_item in &mapping.decode_abi_items {
             let collection_name = &abi_item.collection_name;
-            println!("Creating collection: {}", collection_name);
             db.create_collection(collection_name).await?;
             println!("Created collection: {}", collection_name);
 

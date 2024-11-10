@@ -146,7 +146,13 @@ async fn process_block<T: ReceiptProvider + HeaderProvider + BlockReader + Trans
     header: &Header,
     block_number: u64,
 ) {
-    let block_indecies = provider.block_body_indices(block_number).unwrap();
+    let block_indecies = provider
+        .block_body_indices(block_number)
+        .unwrap_or_else(|e| {
+            eprintln!("Error fetching block {}: {}", block_number, e);
+            // panic!("Failed to fetch block indices");
+            return None;
+        });
 
     if let Some(block_indecies) = block_indecies {
         for tx_id in

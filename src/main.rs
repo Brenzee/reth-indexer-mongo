@@ -7,7 +7,7 @@ use log::info;
 use mongodb::{init_mongodb, insert_logs};
 use reth_chainspec::ChainSpecBuilder;
 use reth_db::mdbx::{DatabaseArguments, MaxReadTransactionDuration};
-use reth_db::{open_db_read_only, DatabaseEnv};
+use reth_db::{open_db_read_only, ClientVersion, DatabaseEnv};
 use reth_node_ethereum::EthereumNode;
 use reth_node_types::NodeTypesWithDBAdapter;
 use reth_primitives::{Header, Log};
@@ -66,7 +66,7 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
     // let read_tx_duration = MaxReadTransactionDuration::Set(Duration::from_secs(30));
     // let database_args =
     // DatabaseArguments::default().with_max_read_transaction_duration(Some(read_tx_duration));
-    let database_args: DatabaseArguments = Default::default();
+    let database_args: DatabaseArguments = DatabaseArguments::new(Default::default());
     println!("database_args: {:#?}", database_args);
     let db = open_db_read_only(db_path.join("db").as_path(), database_args)?;
     info!("Opened db");

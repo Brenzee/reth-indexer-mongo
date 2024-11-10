@@ -62,7 +62,7 @@ pub async fn insert_logs(
     let docs: Vec<Document> = logs
         .iter()
         .map(|log| {
-            let timestamp = DateTime::from_millis(header.timestamp as i64);
+            let timestamp = DateTime::from_millis((header.timestamp as i64) * 1000);
             let mut doc = doc! {
                 "block_number": block_number.clone(),
                 "contract_address": log.address.to_string(),

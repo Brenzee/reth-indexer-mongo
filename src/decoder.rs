@@ -134,6 +134,9 @@ fn decode_topic_value(topic: &[u8], abi: &ABIInput) -> String {
         "uint64" => sol_data::Uint::<64>::abi_decode(topic, true)
             .unwrap()
             .to_string(),
+        "uint112" => sol_data::Uint::<112>::abi_decode(topic, true)
+            .unwrap()
+            .to_string(),
         "uint128" => sol_data::Uint::<128>::abi_decode(topic, true)
             .unwrap()
             .to_string(),

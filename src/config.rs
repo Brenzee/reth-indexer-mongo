@@ -53,8 +53,8 @@ pub struct IndexerContractMapping {
     pub filter_by_contract_addresses: Option<Vec<Address>>,
 
     /// How often you should sync back to the postgres db.
-    #[serde(rename = "syncBackRoughlyEveryNLogs")]
-    pub sync_back_every_n_log: u64,
+    // #[serde(rename = "syncBackRoughlyEveryNLogs")]
+    // pub sync_back_every_n_log: u64,
 
     /// The list of ABI items to decode.
     #[serde(rename = "decodeAbiItems")]

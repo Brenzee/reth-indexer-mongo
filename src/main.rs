@@ -67,6 +67,7 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
         .with_max_read_transaction_duration(Some(MaxReadTransactionDuration::Set(
             Duration::from_secs(10 * 60),
         )));
+    println!("database_args: {:#?}", database_args);
     let db = open_db_read_only(db_path.join("db").as_path(), database_args)?;
     info!("Opened db");
 

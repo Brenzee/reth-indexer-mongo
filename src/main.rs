@@ -6,6 +6,7 @@ use decoder::decode_logs;
 use log::info;
 use mongodb::{init_mongodb, insert_logs};
 use reth_chainspec::ChainSpecBuilder;
+use reth_db::mdbx::{DatabaseArguments, MaxReadTransactionDuration};
 use reth_db::{open_db_read_only, DatabaseEnv};
 use reth_node_ethereum::EthereumNode;
 use reth_node_types::NodeTypesWithDBAdapter;
@@ -18,10 +19,13 @@ use std::fs::File;
 use std::io::Read;
 use std::time::Instant;
 use std::{path::Path, sync::Arc};
+use tokio::time::Duration;
 
 mod config;
 mod decoder;
 mod mongodb;
+
+// Univ2 factory 10000835
 
 /// Loads the indexer configuration from the "reth-indexer-config.json" file.
 /// Returns the loaded `IndexerConfig` if successful.
@@ -59,7 +63,10 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
     let to_block = config.to_block;
 
     let db_path = Path::new(&config.reth_db_location);
-    let db = open_db_read_only(db_path.join("db").as_path(), Default::default())?;
+    let read_tx_duration = MaxReadTransactionDuration::Set(Duration::from_secs(30));
+    let database_args =
+        DatabaseArguments::default().with_max_read_transaction_duration(Some(read_tx_duration));
+    let db = open_db_read_only(db_path.join("db").as_path(), database_args)?;
     info!("Opened db");
 
     println!("Initializing MongoDB");

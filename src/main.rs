@@ -63,15 +63,14 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
     let to_block = config.to_block;
 
     let db_path = Path::new(&config.reth_db_location);
-    let database_args: DatabaseArguments = DatabaseArguments::new(Default::default())
-        .with_max_read_transaction_duration(Some(MaxReadTransactionDuration::Set(
-            Duration::from_secs(10 * 60),
-        )));
-    println!("database_args: {:#?}", database_args);
-    let db = open_db_read_only(db_path.join("db").as_path(), database_args)?;
-    info!("Opened db");
 
-    println!("Initializing MongoDB");
+    // Unbounded read transaction duration
+    // By default the read transaction duration is set to 5 minutes.
+    // This means that if there is a long running script, the script will suddenly stop after 5 minutes
+    let database_args: DatabaseArguments = DatabaseArguments::new(Default::default())
+        .with_max_read_transaction_duration(Some(MaxReadTransactionDuration::Unbounded));
+    let db = open_db_read_only(db_path.join("db").as_path(), database_args)?;
+
     let mongodb = init_mongodb(&config.mongodb, &config.event_mappings).await?;
     info!("Initialized MongoDB");
     let spec = ChainSpecBuilder::mainnet().build();
@@ -83,7 +82,7 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
 
     let provider = factory.provider()?;
 
-    info!("MongoDB Syncing...");
+    println!("MongoDB Syncing...");
     let start = Instant::now();
 
     for block_number in from_block..to_block {

@@ -33,11 +33,14 @@ async fn create_collections(
     for mapping in event_mappings {
         for abi_item in &mapping.decode_abi_items {
             let collection_name = &abi_item.collection_name;
+            println!("Creating collection: {}", collection_name);
             db.create_collection(collection_name).await?;
+            println!("Created collection: {}", collection_name);
 
             // TODO: Support indecies
         }
     }
+    println!("Created all collections");
     Ok(())
 }
 

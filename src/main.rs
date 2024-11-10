@@ -65,52 +65,52 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
     println!("Initializing MongoDB");
     let mongodb = init_mongodb(&config.mongodb, &config.event_mappings).await?;
     info!("Initialized MongoDB");
-    // let spec = ChainSpecBuilder::mainnet().build();
-    // let factory = ProviderFactory::<NodeTypesWithDBAdapter<EthereumNode, Arc<DatabaseEnv>>>::new(
-    //     db.into(),
-    //     spec.into(),
-    //     StaticFileProvider::read_only(db_path.join("static_files"), true)?,
-    // );
+    let spec = ChainSpecBuilder::mainnet().build();
+    let factory = ProviderFactory::<NodeTypesWithDBAdapter<EthereumNode, Arc<DatabaseEnv>>>::new(
+        db.into(),
+        spec.into(),
+        StaticFileProvider::read_only(db_path.join("static_files"), true)?,
+    );
 
-    // let provider = factory.provider()?;
+    let provider = factory.provider()?;
 
-    // info!("MongoDB Syncing...");
-    // let start = Instant::now();
+    info!("MongoDB Syncing...");
+    let start = Instant::now();
 
-    // for block_number in from_block..to_block {
-    //     info!("Checking block {}", block_number);
-    //     match provider.header_by_number(block_number).unwrap() {
-    //         None => {
-    //             log::warn!("Block {} not found", block_number);
-    //             continue;
-    //         }
-    //         Some(block_header) => {
-    //             for mapping in &config.event_mappings {
-    //                 // If the event needs to be filtered by a specific contract address
-    //                 if let Some(contract_addr) = &mapping.filter_by_contract_addresses {
-    //                     if !contract_addr
-    //                         .iter()
-    //                         .any(|address| contract_in_bloom(*address, block_header.logs_bloom))
-    //                     {
-    //                         continue;
-    //                     }
-    //                 }
+    for block_number in from_block..to_block {
+        info!("Checking block {}", block_number);
+        match provider.header_by_number(block_number).unwrap() {
+            None => {
+                log::warn!("Block {} not found", block_number);
+                continue;
+            }
+            Some(block_header) => {
+                for mapping in &config.event_mappings {
+                    // If the event needs to be filtered by a specific contract address
+                    if let Some(contract_addr) = &mapping.filter_by_contract_addresses {
+                        if !contract_addr
+                            .iter()
+                            .any(|address| contract_in_bloom(*address, block_header.logs_bloom))
+                        {
+                            continue;
+                        }
+                    }
 
-    //                 if !mapping.decode_abi_items.iter().any(|abi_item| {
-    //                     topic_in_bloom(abi_item_topic_id(abi_item), block_header.logs_bloom)
-    //                 }) {
-    //                     continue;
-    //                 }
+                    if !mapping.decode_abi_items.iter().any(|abi_item| {
+                        topic_in_bloom(abi_item_topic_id(abi_item), block_header.logs_bloom)
+                    }) {
+                        continue;
+                    }
 
-    //                 process_block(&provider, &mongodb, &mapping, &block_header, block_number).await;
-    //             }
-    //         }
-    //     }
-    // }
+                    process_block(&provider, &mongodb, &mapping, &block_header, block_number).await;
+                }
+            }
+        }
+    }
 
-    // info!("MongoDB sync is done");
-    // let duration = start.elapsed();
-    // println!("Time taken: {:.2}", duration.as_secs_f32());
+    info!("MongoDB sync is done");
+    let duration = start.elapsed();
+    println!("Time taken: {:.2}", duration.as_secs_f32());
 
     Ok(())
 }

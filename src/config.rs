@@ -27,6 +27,13 @@ pub struct ABIInput {
     pub regex: Option<String>,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+pub struct CustomDbIndex {
+    /// True = 1, False = -1
+    pub sort_asc: bool,
+    pub index_field: String,
+}
+
 /// Represents an item in the ABI.
 #[derive(Debug, Deserialize, Clone)]
 pub struct ABIItem {
@@ -40,8 +47,8 @@ pub struct ABIItem {
     #[serde(rename = "collectionName")]
     pub collection_name: String,
 
-    // Apply custom indexes to the database
-    pub custom_db_indexes: Option<Vec<Vec<String>>>,
+    /// Apply custom indexes to the database
+    pub custom_db_indexes: Option<Vec<Vec<CustomDbIndex>>>,
 }
 
 /// Represents a contract mapping in the Indexer.
@@ -65,23 +72,23 @@ fn default_false() -> bool {
     false
 }
 
-/// Represents a contract mapping in the Indexer.
-#[derive(Debug, Deserialize)]
-pub struct IndexerPostgresConfig {
-    /// If true, the tables will be dropped and recreated before syncing.
-    #[serde(rename = "dropTableBeforeSync")]
-    pub drop_tables: bool,
+// /// Represents a contract mapping in the Indexer.
+// #[derive(Debug, Deserialize)]
+// pub struct IndexerPostgresConfig {
+//     /// If true, the tables will be dropped and recreated before syncing.
+//     #[serde(rename = "dropTableBeforeSync")]
+//     pub drop_tables: bool,
 
-    /// If true, it apply indexes before it syncs which is slower but means
-    /// you can query the data straight away
-    #[serde(rename = "applyIndexesBeforeSync")]
-    #[serde(default = "default_false")]
-    pub apply_indexes_before_sync: bool,
+//     /// If true, it apply indexes before it syncs which is slower but means
+//     /// you can query the data straight away
+//     #[serde(rename = "applyIndexesBeforeSync")]
+//     #[serde(default = "default_false")]
+//     pub apply_indexes_before_sync: bool,
 
-    /// The PostgreSQL connection string.
-    #[serde(rename = "connectionString")]
-    pub connection_string: String,
-}
+//     /// The PostgreSQL connection string.
+//     #[serde(rename = "connectionString")]
+//     pub connection_string: String,
+// }
 
 /// Represents a contract mapping in the Indexer.
 #[derive(Debug, Deserialize)]
@@ -102,33 +109,33 @@ pub struct IndexerMongoDBConfig {
     pub database: String,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct IndexerGcpBigQueryConfig {
-    #[serde(rename = "dropTableBeforeSync")]
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    pub drop_tables: bool,
+// #[derive(Debug, Deserialize)]
+// pub struct IndexerGcpBigQueryConfig {
+//     #[serde(rename = "dropTableBeforeSync")]
+//     // #[serde(skip_serializing_if = "Option::is_none")]
+//     pub drop_tables: bool,
 
-    #[serde(rename = "projectId")]
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    pub project_id: String,
+//     #[serde(rename = "projectId")]
+//     // #[serde(skip_serializing_if = "Option::is_none")]
+//     pub project_id: String,
 
-    #[serde(rename = "datasetId")]
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    pub dataset_id: String,
+//     #[serde(rename = "datasetId")]
+//     // #[serde(skip_serializing_if = "Option::is_none")]
+//     pub dataset_id: String,
 
-    #[serde(rename = "credentialsPath")]
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    pub credentials_path: String,
-}
+//     #[serde(rename = "credentialsPath")]
+//     // #[serde(skip_serializing_if = "Option::is_none")]
+//     pub credentials_path: String,
+// }
 
-#[derive(Debug, Deserialize)]
-pub struct IndexerParquetConfig {
-    #[serde(rename = "dropTableBeforeSync")]
-    pub drop_tables: bool,
+// #[derive(Debug, Deserialize)]
+// pub struct IndexerParquetConfig {
+//     #[serde(rename = "dropTableBeforeSync")]
+//     pub drop_tables: bool,
 
-    #[serde(rename = "dataDirectory")]
-    pub data_directory: String,
-}
+//     #[serde(rename = "dataDirectory")]
+//     pub data_directory: String,
+// }
 
 #[derive(Debug, Deserialize)]
 pub struct IndexerConfig {
@@ -137,8 +144,8 @@ pub struct IndexerConfig {
     pub reth_db_location: PathBuf,
 
     /// The location of the CSV.
-    #[serde(rename = "csvLocation")]
-    pub csv_location: PathBuf,
+    // #[serde(rename = "csvLocation")]
+    // pub csv_location: PathBuf,
 
     /// The starting block number.
     #[serde(rename = "fromBlockNumber")]
@@ -154,8 +161,8 @@ pub struct IndexerConfig {
     pub mongodb: IndexerMongoDBConfig,
 
     /// The postgres configuration.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub postgres: Option<IndexerPostgresConfig>,
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    // pub postgres: Option<IndexerPostgresConfig>,
 
     // /// GCP configuration, if exists
     // #[serde(rename = "gcpBigQuery", skip_serializing_if = "Option::is_none")]

@@ -1,7 +1,7 @@
 use mongodb::{
     bson::{self, doc, DateTime, Document},
     options::{ClientOptions, ResolverConfig},
-    Client, Collection, Database,
+    Client, Collection, Database, IndexModel,
 };
 use reth_primitives::{Header, TransactionSigned, TransactionSignedNoHash};
 
@@ -32,7 +32,18 @@ async fn create_collections(
             db.create_collection(collection_name).await?;
             println!("Created collection: {}", collection_name);
 
-            // TODO: Support indecies
+            if let Some(custom_db_indexes) = &abi_item.custom_db_indexes {
+                for index in custom_db_indexes {
+                    let index = IndexModel::builder()
+                        .keys(Document::from_iter(index.iter().map(|i| {
+                            (i.index_field.clone(), bson::Bson::Int32(i.sort_asc as i32))
+                        })))
+                        .build();
+                    db.collection::<Document>(collection_name)
+                        .create_index(index)
+                        .await?;
+                }
+            }
         }
     }
     println!("Created all collections");

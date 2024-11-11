@@ -86,7 +86,7 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
     let start = Instant::now();
     let bar = ProgressBar::new(to_block - from_block).with_style(
         ProgressStyle::default_bar()
-            .template("{percentage:>3}% [{bar:40}] {pos}/{len}")
+            .template("{percent_precise}% [{bar:40}] {pos}/{len}")
             .unwrap(),
     );
     for block_number in from_block..to_block {

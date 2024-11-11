@@ -3,6 +3,7 @@ use alloy::primitives::{keccak256, Address, Bloom, B256};
 use alloy::rpc::types::{FilterSet, FilteredParams};
 use config::{ABIItem, IndexerConfig, IndexerContractMapping};
 use decoder::decode_logs;
+use indicatif::ProgressBar;
 use log::info;
 use mongodb::{init_mongodb, insert_logs};
 use reth_chainspec::ChainSpecBuilder;
@@ -84,9 +85,10 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
 
     println!("MongoDB Syncing...");
     let start = Instant::now();
-
+    let bar = ProgressBar::new(to_block - from_block);
     for block_number in from_block..to_block {
         info!("Checking block {}", block_number);
+        bar.inc(1);
         match provider.header_by_number(block_number).unwrap() {
             None => {
                 log::warn!("Block {} not found", block_number);
@@ -115,10 +117,9 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
             }
         }
     }
-
-    info!("MongoDB sync is done");
+    bar.finish();
     let duration = start.elapsed();
-    println!("Time taken: {:.2}", duration.as_secs_f32());
+    println!("Sync is done. Time taken: {:.2}", duration.as_secs_f32());
 
     Ok(())
 }

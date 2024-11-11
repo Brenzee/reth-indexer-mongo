@@ -1,0 +1,75 @@
+{
+  "rethDBLocation": "/home/ubuntu/.local/share/reth/mainnet/db",
+  "csvLocation": "/tmp",
+  "fromBlockNumber": 12369621,
+  "toBlockNumber": 21166087,
+  "mongodb": {
+    "connectionString": "mongodb://localhost:27017",
+    "database": "reth-events"
+  },
+  "eventMappings": [
+    {
+      "filterByContractAddress": [
+        "0x1f98431c8ad98523631ae4a59f267346ea31f984"
+      ],
+      "decodeAbiItems": [
+        {
+          "name": "PoolCreated",
+          "collectionName": "univ3-pool",
+          "customDbIndexes": [
+            [
+              {
+                "indexField": "pool",
+                "sortAsc": true
+              }
+            ],
+            [
+              {
+                "indexField": "token0",
+                "sortAsc": true
+              }
+            ],
+            [
+              {
+                "indexField": "token1",
+                "sortAsc": true
+              }
+            ]
+          ],
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "token0",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "token1",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint24",
+              "name": "fee",
+              "type": "uint24"
+            },
+            {
+              "indexed": false,
+              "internalType": "int24",
+              "name": "tickSpacing",
+              "type": "int24"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "pool",
+              "type": "address"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

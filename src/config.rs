@@ -30,7 +30,9 @@ pub struct ABIInput {
 #[derive(Debug, Deserialize, Clone)]
 pub struct CustomDbIndex {
     /// True = 1, False = -1
+    #[serde(rename = "sortAsc")]
     pub sort_asc: bool,
+    #[serde(rename = "indexField")]
     pub index_field: String,
 }
 

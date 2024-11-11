@@ -3,7 +3,7 @@ use alloy::primitives::{keccak256, Address, Bloom, B256};
 use alloy::rpc::types::{FilterSet, FilteredParams};
 use config::{ABIItem, IndexerConfig, IndexerContractMapping};
 use decoder::decode_logs;
-use indicatif::ProgressBar;
+use indicatif::{ProgressBar, ProgressStyle};
 use log::info;
 use mongodb::{init_mongodb, insert_logs};
 use reth_chainspec::ChainSpecBuilder;
@@ -85,7 +85,11 @@ async fn sync(config: &IndexerConfig) -> eyre::Result<()> {
 
     println!("MongoDB Syncing...");
     let start = Instant::now();
-    let bar = ProgressBar::new(to_block - from_block);
+    let bar = ProgressBar::new(to_block - from_block).with_style(
+        ProgressStyle::default_bar()
+            .template("{percentage:>3}% [{bar:40}] {pos}/{len}")
+            .unwrap(),
+    );
     for block_number in from_block..to_block {
         info!("Checking block {}", block_number);
         bar.inc(1);

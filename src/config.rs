@@ -106,7 +106,13 @@ pub struct IndexerMongoDBConfig {
     #[serde(rename = "connectionString")]
     pub connection_string: String,
 
+    /// The database name.
     pub database: String,
+
+    /// If true, the tables will be dropped and recreated before syncing.
+    #[serde(rename = "dropTableBeforeSync")]
+    #[serde(default = "default_false")]
+    pub drop_tables: bool,
 }
 
 // #[derive(Debug, Deserialize)]

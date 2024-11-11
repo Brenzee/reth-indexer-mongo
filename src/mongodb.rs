@@ -18,17 +18,24 @@ pub async fn init_mongodb(
     let client = Client::with_options(options)?;
     let db = client.database(&config.database);
     // Need to create tables
-    create_collections(&db, event_mappings).await?;
+    create_collections(&db, config, event_mappings).await?;
     Ok(db)
 }
 
 async fn create_collections(
     db: &Database,
+    config: &IndexerMongoDBConfig,
     event_mappings: &[IndexerContractMapping],
 ) -> eyre::Result<()> {
     for mapping in event_mappings {
         for abi_item in &mapping.decode_abi_items {
             let collection_name = &abi_item.collection_name;
+
+            if config.drop_tables {
+                println!("Dropping collection: {}", collection_name);
+                db.collection::<Document>(collection_name).drop().await?;
+            }
+
             db.create_collection(collection_name).await?;
             println!("Created collection: {}", collection_name);
 

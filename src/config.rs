@@ -48,6 +48,7 @@ pub struct ABIItem {
     pub collection_name: String,
 
     /// Apply custom indexes to the database
+    #[serde(rename = "customDbIndexes")]
     pub custom_db_indexes: Option<Vec<Vec<CustomDbIndex>>>,
 }
 

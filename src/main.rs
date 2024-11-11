@@ -8,7 +8,7 @@ use log::info;
 use mongodb::{init_mongodb, insert_logs};
 use reth_chainspec::ChainSpecBuilder;
 use reth_db::mdbx::{DatabaseArguments, MaxReadTransactionDuration};
-use reth_db::{open_db_read_only, ClientVersion, DatabaseEnv};
+use reth_db::{open_db_read_only, DatabaseEnv};
 use reth_node_ethereum::EthereumNode;
 use reth_node_types::NodeTypesWithDBAdapter;
 use reth_primitives::{Header, Log};
@@ -20,7 +20,6 @@ use std::fs::File;
 use std::io::Read;
 use std::time::Instant;
 use std::{path::Path, sync::Arc};
-use tokio::time::Duration;
 
 mod config;
 mod decoder;

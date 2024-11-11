@@ -5752,26 +5752,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "reth-db-reader"
-version = "0.1.0"
-dependencies = [
- "alloy",
- "eyre",
- "indicatif",
- "log",
- "mongodb",
- "reth-chainspec",
- "reth-db",
- "reth-node-ethereum",
- "reth-node-types",
- "reth-primitives",
- "reth-provider",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
 name = "reth-discv4"
 version = "1.1.0"
 source = "git+https://github.com/paradigmxyz/reth#962fa6685bd5763f8a162a1f9f9e67a92c9548a3"
@@ -6319,6 +6299,26 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror",
+]
+
+[[package]]
+name = "reth-indexer-mongo"
+version = "0.1.0"
+dependencies = [
+ "alloy",
+ "eyre",
+ "indicatif",
+ "log",
+ "mongodb",
+ "reth-chainspec",
+ "reth-db",
+ "reth-node-ethereum",
+ "reth-node-types",
+ "reth-primitives",
+ "reth-provider",
+ "serde",
+ "serde_json",
+ "tokio",
 ]
 
 [[package]]

@@ -146,7 +146,7 @@ where
         match value.parse::<Decimal128>() {
             Ok(decimal) => decimal.into(),
             Err(_) => {
-                println!("Error parsing decimal: {}", value);
+                println!("Error parsing decimal: {}. Bits: {}", value, BITS);
                 panic!();
             }
         }

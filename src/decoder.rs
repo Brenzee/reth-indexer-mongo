@@ -5,6 +5,7 @@ use alloy::{
 };
 use mongodb::bson::{Bson, Decimal128};
 use reth_primitives::Log;
+use std::str::FromStr;
 
 use crate::config::{ABIInput, ABIItem};
 
@@ -140,16 +141,9 @@ where
             .unwrap()
             .into()
     } else {
-        let value = sol_data::Uint::<BITS>::abi_decode(topic, true)
-            .unwrap()
-            .to_string();
-        match value.parse::<Decimal128>() {
-            Ok(decimal) => decimal.into(),
-            Err(_) => {
-                println!("Error parsing decimal: {}. Bits: {}", value, BITS);
-                0.into()
-            }
-        }
+        let value = sol_data::Uint::<BITS>::abi_decode(topic, true).unwrap();
+
+        Decimal128::from_str(&value.to_string()).unwrap().into()
     }
 }
 

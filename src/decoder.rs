@@ -140,16 +140,16 @@ where
             .unwrap()
             .into()
     } else {
-        let value = sol_data::Uint::<BITS>::abi_decode(topic, true)
-            .unwrap()
-            .to_string();
-        match value.parse::<Decimal128>() {
-            Ok(decimal) => decimal.into(),
-            Err(_) => {
-                println!("Error parsing decimal: {}. Bits: {}", value, BITS);
-                panic!();
-            }
-        }
+        let array: [u8; 16] = topic.try_into().unwrap();
+        Decimal128::from_bytes(array).into()
+
+        // match value.parse::<Decimal128>() {
+        //     Ok(decimal) => decimal.into(),
+        //     Err(_) => {
+        //         println!("Error parsing decimal: {}. Bits: {}", value, BITS);
+        //         panic!();
+        //     }
+        // }
     }
 }
 

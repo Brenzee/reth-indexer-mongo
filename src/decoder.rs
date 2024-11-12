@@ -141,9 +141,17 @@ where
             .unwrap()
             .into()
     } else {
-        let value = sol_data::Uint::<BITS>::abi_decode(topic, true).unwrap();
+        let value = sol_data::Uint::<BITS>::abi_decode(topic, true)
+            .unwrap()
+            .to_string();
 
-        Decimal128::from_str(&value.to_string()).unwrap().into()
+        match Decimal128::from_str(&value) {
+            Ok(decimal) => decimal.into(),
+            Err(_) => {
+                println!("Error parsing decimal: {}. Bits: {}", value, BITS);
+                value.into()
+            }
+        }
     }
 }
 

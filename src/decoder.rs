@@ -187,9 +187,9 @@ fn decode_topic_value(topic: &[u8], abi: &ABIInput) -> Bson {
                 104 => decode_numeric_128::<104>(topic, is_signed),
                 112 => decode_numeric_128::<112>(topic, is_signed),
                 120 => decode_numeric_128::<120>(topic, is_signed),
-                // 128 => decode_numeric_128::<128>(topic, is_signed),
+                128 => decode_numeric_128::<128>(topic, is_signed),
                 // Use String for bits > 128
-                128..=256 => decode_numeric_string(topic, is_signed),
+                136..=256 => decode_numeric_string(topic, is_signed),
                 // 136 => decode_numeric::<136>(topic, is_signed),
                 // 144 => decode_numeric::<144>(topic, is_signed),
                 // 152 => decode_numeric::<152>(topic, is_signed),

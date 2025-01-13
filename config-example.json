@@ -1,6 +1,5 @@
 {
   "rethDBLocation": "/home/ubuntu/.local/share/reth/mainnet",
-  "csvLocation": "/tmp",
   "fromBlockNumber": 20840524,
   "toBlockNumber": 21159531,
   "mongodb": {
@@ -74,3 +73,4 @@
     }
   ]
 }
+

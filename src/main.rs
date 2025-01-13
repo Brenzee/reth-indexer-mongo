@@ -25,8 +25,6 @@ mod config;
 mod decoder;
 mod mongodb;
 
-// Univ2 factory 10000835
-
 /// Loads the indexer configuration from the "reth-indexer-config.json" file.
 /// Returns the loaded `IndexerConfig` if successful.
 /// Panics if the file does not exist or if there is an error reading or parsing the file.
@@ -238,70 +236,3 @@ async fn process_tx<T: ReceiptProvider + HeaderProvider + BlockReader + Transact
         }
     }
 }
-
-// fn sync_events<T: ReceiptProvider + HeaderProvider + BlockReader + TransactionsProvider>(
-//     config: &IndexerConfig,
-//     provider: &T,
-// ) -> eyre::Result<()> {
-//     // TODO: The goal is as follows:
-//     // 1. fromBlockNumber and toBlockNumber - this is the range of blocks to check
-//     // 2. in config needs to add mongodb support
-//     let block_number = 21116342;
-//     const USDC: Address = address!("a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
-
-//     let data = provider
-//         .header_by_number(block_number)?
-//         .ok_or(eyre::eyre!("block not found"))?;
-//     println!("block header: {:#?}", data);
-//     let start = Instant::now();
-
-//     let filter_set = FilterSet::from(USDC);
-//     let address_filter = FilteredParams::address_filter(&filter_set);
-//     let has_usdc = FilteredParams::matches_address(data.logs_bloom, &address_filter);
-
-//     if has_usdc == false {
-//         println!("Block doesn't have USDC logs");
-//         return Ok(());
-//     } else {
-//         println!("Block has USDC logs");
-//     }
-
-//     let block_indecies = provider.block_body_indices(block_number)?.unwrap();
-//     for tx_id in block_indecies.first_tx_num..block_indecies.first_tx_num + block_indecies.tx_count
-//     {
-//         // let tx = provider.transaction_by_id_no_hash(tx_id)?.unwrap();
-//         // println!("tx: {:?}", tx);
-//         let receipt = provider.receipt(tx_id)?.unwrap();
-
-//         let logs: Vec<Log> = receipt
-//             .logs
-//             .iter()
-//             .filter(|log| USDC == log.address)
-//             .cloned()
-//             .collect();
-
-//         if logs.is_empty() {
-//             continue;
-//         }
-
-//         let tx = provider.transaction_by_id(tx_id)?.unwrap();
-
-//         println!("Transaction {} had USDC logs {:#?}", tx.hash, logs);
-
-//         // if logs.is_emp
-//     }
-//     let duration = start.elapsed();
-//     println!("Time taken: {} ms", duration.as_millis());
-
-//     // data.logs
-//     // let rpc_bloom: Bloom = Bloom::from_str(&format!("{:?}", header_tx_info.logs_bloom)).unwrap();
-
-//     // let tx_hash: FixedBytes<32> =
-//     //     "0xd39613e81e6f3976770a038980ce271a1223c41c823257a535def515dda76559".parse()?;
-//     // let tx = provider
-//     //     .transaction_by_hash(tx_hash)?
-//     //     .ok_or(eyre::eyre!("did not get tx"))?;
-//     // println!("tx: {:#?}", tx);
-
-//     Ok(())
-// }

@@ -1,9 +1,9 @@
 use mongodb::{
     bson::{self, doc, DateTime, Document},
-    options::{ClientOptions, ResolverConfig},
+    options::ClientOptions,
     Client, Collection, Database, IndexModel,
 };
-use reth_primitives::{Header, TransactionSigned, TransactionSignedNoHash};
+use reth_primitives::{Header, TransactionSignedNoHash};
 
 use crate::{
     config::{IndexerContractMapping, IndexerMongoDBConfig},
@@ -17,6 +17,7 @@ pub async fn init_mongodb(
     let options = ClientOptions::parse(&config.connection_string).await?;
     let client = Client::with_options(options)?;
     let db = client.database(&config.database);
+
     // Need to create tables
     create_collections(&db, config, event_mappings).await?;
     Ok(db)

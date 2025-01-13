@@ -1,17 +1,14 @@
 {
   "rethDBLocation": "/home/ubuntu/.local/share/reth/mainnet/db",
-  "csvLocation": "/tmp",
   "fromBlockNumber": 12369621,
-  "toBlockNumber": 21166087,
+  "toBlockNumber": 21180626,
   "mongodb": {
     "connectionString": "mongodb://localhost:27017",
     "database": "reth-events"
   },
   "eventMappings": [
     {
-      "filterByContractAddress": [
-        "0x1f98431c8ad98523631ae4a59f267346ea31f984"
-      ],
+      "filterByContractAddress": ["0x1f98431c8ad98523631ae4a59f267346ea31f984"],
       "decodeAbiItems": [
         {
           "name": "PoolCreated",
@@ -73,3 +70,4 @@
     }
   ]
 }
+

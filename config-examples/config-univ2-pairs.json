@@ -1,25 +1,18 @@
 {
   "rethDBLocation": "/home/ubuntu/.local/share/reth/mainnet/db",
-  "csvLocation": "/tmp",
-  "fromBlockNumber": 21016342,
-  "toBlockNumber": 21123012,
-  "postgres": {
-    "dropTableBeforeSync": true,
-    "applyIndexesBeforeSync": false,
-    "connectionString": "postgresql://postgres:password@localhost:5432/reth_indexer"
-  },
+  "fromBlockNumber": 10000835,
+  "toBlockNumber": 21166087,
   "mongodb": {
-    "connectionString": "mongodb://localhost:27017"
+    "connectionString": "mongodb://localhost:27017",
+    "database": "reth-events"
   },
   "eventMappings": [
     {
-      "syncBackRoughlyEveryNLogs": 1000,
-      "filter_by_contract_addresses": [
-        "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
-      ],
+      "filterByContractAddress": ["0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"],
       "decodeAbiItems": [
         {
-          "name": "Sync",
+          "name": "PairCreated",
+          "collectionName": "univ2-pair",
           "inputs": [
             {
               "indexed": true,
@@ -51,3 +44,4 @@
     }
   ]
 }
+

@@ -1,6 +1,5 @@
 {
   "rethDBLocation": "/home/ubuntu/.local/share/reth/mainnet/db",
-  "csvLocation": "/tmp",
   "fromBlockNumber": 10000835,
   "toBlockNumber": 21123012,
   "mongodb": {
@@ -9,9 +8,7 @@
   },
   "eventMappings": [
     {
-      "filterByContractAddress": [
-        "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
-      ],
+      "filterByContractAddress": ["0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"],
       "decodeAbiItems": [
         {
           "name": "PairCreated",
@@ -47,3 +44,4 @@
     }
   ]
 }
+

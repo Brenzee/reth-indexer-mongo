@@ -82,7 +82,7 @@ fn decode_log_topics(log: &Log, abi: &ABIItem) -> Result<Vec<DecodedTopic>, ()> 
 fn decode_topic_log(topic: &[u8], abi_input: &ABIInput) -> Result<DecodedTopic, ()> {
     let value = decode_topic_value(topic, abi_input);
 
-    // TODO: Do we need regex check here?
+    // TODO: Regex should go here
 
     Ok(DecodedTopic {
         name: abi_input.name.clone(),
@@ -97,7 +97,6 @@ fn decode_log_data(log: &Log, abi: &ABIItem) -> Result<Vec<DecodedTopic>, ()> {
         .filter(|input| !input.indexed)
         .collect::<Vec<_>>();
 
-    // let topics = log.data.as_slice().chunks_exact(32);
     let topics = log.data.data.chunks_exact(32);
     if non_indexed_inputs.len() != topics.len() {
         return Err(());
@@ -127,6 +126,31 @@ fn decode_numeric_string(topic: &[u8], is_signed: bool) -> Bson {
             .to_string()
             .into()
     }
+}
+
+fn decode_numeric_long<const BITS: usize>(topic: &[u8], is_signed: bool) -> Bson
+where
+    IntBitCount<BITS>: SupportedInt,
+{
+    if BITS > 64 {
+        panic!("Bits size {} is not supported for Bson::Int64", BITS);
+    }
+
+    let value = if is_signed {
+        sol_data::Int::<BITS>::abi_decode(topic, true)
+            .unwrap()
+            .to_string()
+            .parse::<i64>()
+            .unwrap()
+    } else {
+        sol_data::Uint::<BITS>::abi_decode(topic, true)
+            .unwrap()
+            .to_string()
+            .parse::<i64>()
+            .unwrap()
+    };
+
+    Bson::Int64(value)
 }
 
 fn decode_numeric_128<const BITS: usize>(topic: &[u8], is_signed: bool) -> Bson
@@ -179,89 +203,40 @@ fn decode_topic_value(topic: &[u8], abi: &ABIInput) -> Bson {
             }
 
             match bits {
-                // Use Decimal128 for bits <= 128
-                8 => decode_numeric_128::<8>(topic, is_signed),
-                16 => decode_numeric_128::<16>(topic, is_signed),
-                24 => decode_numeric_128::<24>(topic, is_signed),
-                32 => decode_numeric_128::<32>(topic, is_signed),
-                40 => decode_numeric_128::<40>(topic, is_signed),
-                48 => decode_numeric_128::<48>(topic, is_signed),
-                56 => decode_numeric_128::<56>(topic, is_signed),
-                64 => decode_numeric_128::<64>(topic, is_signed),
-                72 => decode_numeric_128::<72>(topic, is_signed),
-                80 => decode_numeric_128::<80>(topic, is_signed),
-                88 => decode_numeric_128::<88>(topic, is_signed),
-                96 => decode_numeric_128::<96>(topic, is_signed),
-                104 => decode_numeric_128::<104>(topic, is_signed),
-                112 => decode_numeric_128::<112>(topic, is_signed),
-                120 => decode_numeric_128::<120>(topic, is_signed),
-                128 => decode_numeric_128::<128>(topic, is_signed),
+                // Use Long for bits <= 64
+                8 | 16 | 24 | 32 | 40 | 48 | 56 | 64 => decode_numeric_long::<64>(topic, is_signed),
+                // Use Decimal128 for bits > 64 but <= 128
+                72..=128 => decode_numeric_128::<128>(topic, is_signed),
                 // Use String for bits > 128
                 136..=256 => decode_numeric_string(topic, is_signed),
-                // 136 => decode_numeric::<136>(topic, is_signed),
-                // 144 => decode_numeric::<144>(topic, is_signed),
-                // 152 => decode_numeric::<152>(topic, is_signed),
-                // 160 => decode_numeric::<160>(topic, is_signed),
-                // 168 => decode_numeric::<168>(topic, is_signed),
-                // 176 => decode_numeric::<176>(topic, is_signed),
-                // 184 => decode_numeric::<184>(topic, is_signed),
-                // 192 => decode_numeric::<192>(topic, is_signed),
-                // 200 => decode_numeric::<200>(topic, is_signed),
-                // 208 => decode_numeric::<208>(topic, is_signed),
-                // 216 => decode_numeric::<216>(topic, is_signed),
-                // 224 => decode_numeric::<224>(topic, is_signed),
-                // 232 => decode_numeric::<232>(topic, is_signed),
-                // 240 => decode_numeric::<240>(topic, is_signed),
-                // 248 => decode_numeric::<248>(topic, is_signed),
-                // 256 => decode_numeric::<256>(topic, is_signed),
                 _ => panic!("Unsupported bit size: {}", bits),
             }
+
+            //match bits {
+            //    // Use Decimal128 for bits <= 128
+            //    8 => decode_numeric_128::<8>(topic, is_signed),
+            //    16 => decode_numeric_128::<16>(topic, is_signed),
+            //    24 => decode_numeric_128::<24>(topic, is_signed),
+            //    32 => decode_numeric_128::<32>(topic, is_signed),
+            //    40 => decode_numeric_128::<40>(topic, is_signed),
+            //    48 => decode_numeric_128::<48>(topic, is_signed),
+            //    56 => decode_numeric_128::<56>(topic, is_signed),
+            //    64 => decode_numeric_128::<64>(topic, is_signed),
+            //    72 => decode_numeric_128::<72>(topic, is_signed),
+            //    80 => decode_numeric_128::<80>(topic, is_signed),
+            //    88 => decode_numeric_128::<88>(topic, is_signed),
+            //    96 => decode_numeric_128::<96>(topic, is_signed),
+            //    104 => decode_numeric_128::<104>(topic, is_signed),
+            //    112 => decode_numeric_128::<112>(topic, is_signed),
+            //    120 => decode_numeric_128::<120>(topic, is_signed),
+            //    128 => decode_numeric_128::<128>(topic, is_signed),
+            //    // Use String for bits > 128
+            //    // TODO: Perfect scenario would be if there was a way to make these numbers
+            //    // as Decimal128 as well
+            //    136..=256 => decode_numeric_string(topic, is_signed),
+            //    _ => panic!("Unsupported bit size: {}", bits),
+            //}
         }
-        // "uint8" => sol_data::Uint::<8>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "uint16" => sol_data::Uint::<16>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "uint24" => sol_data::Uint::<24>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "uint32" => sol_data::Uint::<32>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "uint64" => sol_data::Uint::<64>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "uint112" => sol_data::Uint::<112>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "uint128" => sol_data::Uint::<128>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "uint256" => sol_data::Uint::<256>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "int8" => sol_data::Int::<8>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "int16" => sol_data::Int::<16>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "int24" => sol_data::Int::<24>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "int32" => sol_data::Int::<32>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "int64" => sol_data::Int::<64>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "int128" => sol_data::Int::<128>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
-        // "int256" => sol_data::Int::<256>::abi_decode(topic, true)
-        //     .unwrap()
-        //     .to_string(),
         _ => panic!("Unknown type: {}", abi.type_),
     }
 }

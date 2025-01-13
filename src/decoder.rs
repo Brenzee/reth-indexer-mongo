@@ -180,7 +180,7 @@ where
 }
 
 fn decode_topic_value(topic: &[u8], abi: &ABIInput) -> Bson {
-    match abi.type_.as_str() {
+    match abi.get_db_type().as_str() {
         "address" => sol_data::Address::abi_decode(topic, true)
             .unwrap()
             .to_checksum(None)

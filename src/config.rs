@@ -14,12 +14,27 @@ pub struct ABIInput {
     /// The type of the input parameter.
     #[serde(rename = "type")]
     pub type_: String,
+
+    /// Can be used to save values in different types.
+    /// For example, if the type is uint256, but the value is never greater
+    /// than uint64, uint64 can be saved and the value will be saved as Long
+    #[serde(rename = "internalType")]
+    pub internal_type: Option<String>,
     // NOTE: Not sure if necessary
     //#[serde(
     //    // deserialize_with = "deserialize_regex_option",
     //    rename = "rethRegexMatch"
     //)]
     //pub regex: Option<String>,
+}
+
+impl ABIInput {
+    pub fn get_db_type(&self) -> &String {
+        match &self.internal_type {
+            Some(internal_type) => internal_type,
+            _ => &self.type_,
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Clone)]

@@ -45,10 +45,9 @@ fn load_indexer_config(file_path: &Path) -> IndexerConfig {
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     let config: String = std::env::var("CONFIG").unwrap_or("./config.json".to_string());
-    println!("Config: {}", config);
 
     let log_config: IndexerConfig = load_indexer_config(Path::new(&config));
-    println!("log_config: {:#?}", log_config);
+    println!("Config: {:#?}", log_config);
 
     sync(&log_config).await?;
 

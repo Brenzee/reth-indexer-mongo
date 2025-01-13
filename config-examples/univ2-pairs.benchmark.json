@@ -1,7 +1,7 @@
 {
   "rethDBLocation": "/home/ubuntu/.local/share/reth/mainnet/db",
   "fromBlockNumber": 10000835,
-  "toBlockNumber": 21166087,
+  "toBlockNumber": 21614513,
   "mongodb": {
     "connectionString": "mongodb://localhost:27017",
     "database": "reth-events"
@@ -44,4 +44,3 @@
     }
   ]
 }
-

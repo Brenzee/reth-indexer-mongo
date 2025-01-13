@@ -1,6 +1,6 @@
 # Reth Log Indexer with MongoDB
 
-Easily collect and index events directly from the Reth database into a MongoDB. Inspired from reth-indexer.
+Easily collect and index events directly from the Reth database into a MongoDB. Inspired from [reth-indexer](https://github.com/joshstevens19/reth-indexer)
 
 ## Benchmarks
 
